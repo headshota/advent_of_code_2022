@@ -1,3 +1,5 @@
+mod tasks;
+
 fn main() {
-    println!("Hello, world!");
+    println!("Day 1 result is: {}", tasks::day_1());
 }
