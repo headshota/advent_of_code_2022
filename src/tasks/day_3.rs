@@ -16,8 +16,9 @@ pub fn part_1() -> u32{
 
         let part_1 = &line[0..line.len() / 2];
         let part_2 = &line[line.len() / 2..line.len()];
-        let ch = find_same_char(part_1, part_2).unwrap();
-        sum += char_to_score(ch);
+        let matching_chars = find_same_char(part_1, part_2);
+        let ch = matching_chars.first().unwrap();
+        sum += char_to_score(*ch);
     }
 
     sum
@@ -25,17 +26,33 @@ pub fn part_1() -> u32{
 
 
 pub fn part_2() -> u32 {
-    todo!()
-}
+    let lines = get_input_lines("src/inputs/day_3.txt").unwrap();
+    let mut sum = 0;
 
-fn find_same_char(part_1: &str, part_2: &str) -> Option<char> {
-    for c in part_1.chars() {
-        if part_2.contains(c) {
-            return Some(c)
+    let mut group = Vec::new();
+    for (i, line) in lines.enumerate() {
+        let line = line.unwrap();
+        group.push(line);
+
+        if (i + 1) % 3 == 0 {
+            let mut iter = group.iter();
+            let (line1, line2, line3) = ( iter.next().unwrap(), iter.next().unwrap(), iter.next().unwrap() );
+
+            let matching_chars_1 = find_same_char(&line1[..], &line2[..]).iter().collect::<String>();
+            let matching_chars_2 = find_same_char(&matching_chars_1[..], &line3[..]);
+
+
+            let ch = matching_chars_2.first().unwrap();
+            sum += char_to_score(*ch);
+            group.clear();
         }
     }
 
-    None
+    sum
+}
+
+fn find_same_char(part_1: &str, part_2: &str) -> Vec<char> {
+    part_1.chars().filter(|&c| part_2.contains(c) ).collect()
 }
 
 fn char_to_score(c: char) -> u32 {
